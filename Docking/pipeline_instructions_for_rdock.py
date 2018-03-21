@@ -86,7 +86,7 @@ class WriteRDJob(luigi.Task):
 cd %s
 touch %s_rdock.running
 grep -v HOH %s_apo.pdb > %s_apo_dehyd.pdb
-babel -ipdb %s_apo_dehyd.pdb -osy2 %s_apo_dehyd.mol2
+obabel -ipdb %s_apo_dehyd.pdb -osy2 -O %s_apo_dehyd.mol2
 rbcavity -was -d -r %s > %s_rbcavity.log
 rbdock -i %s_mol.sdf -o %s_rdock_out.pdb -r %s -p dock.prm -n 50 > %s_rbcavity.log
 rm %s_rdock.running
