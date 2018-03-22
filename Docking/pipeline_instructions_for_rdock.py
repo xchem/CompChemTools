@@ -13,7 +13,7 @@ class WritePrm(luigi.Task):
         job_input = '''RBT_PARAMETER_FILE_V1.00
 TITLE %s
 
-RECEPTOR_FILE %s_apo_dehyd.mol2
+RECEPTOR_FILE %s_apo_desolv.mol2
 RECEPTOR_FLEX 3.0
 
 ##################################################################
@@ -21,7 +21,7 @@ RECEPTOR_FLEX 3.0
 ##################################################################
 SECTION MAPPER
     SITE_MAPPER RbtLigandSiteMapper
-    REF_MOL %s_mol.sd
+    REF_MOL %s_mol.sdf
     RADIUS 6.0
     SMALL_SPHERE 1.0
     MIN_VOLUME 100
@@ -85,8 +85,8 @@ class WriteRDJob(luigi.Task):
         job_script = '''#!/bin/bash
 cd %s
 touch %s_rdock.running
-grep -v HOH %s_apo.pdb > %s_apo_dehyd.pdb
-obabel -ipdb %s_apo_dehyd.pdb -osy2 -O %s_apo_dehyd.mol2
+grep -v HOH %s_apo.pdb | grep -v ACT | grep -v DMS  > %s_apo_desolv.pdb
+obabel -ipdb %s_apo_desolv.pdb -osy2 -O %s_apo_desolv.mol2
 rbcavity -was -d -r %s > %s_rbcavity.log
 rbdock -i %s_mol.sdf -o %s_rdock_out.pdb -r %s -p dock.prm -n 50 > %s_rbcavity.log
 rm %s_rdock.running
