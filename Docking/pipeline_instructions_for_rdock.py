@@ -30,19 +30,6 @@ SECTION MAPPER
    GRIDSTEP 0.5
 END_SECTION
 
-################################################################
-# CAVITY DEFINITION: TWO SPHERES METHOD
-################################################################
-#SECTION MAPPER
-#    SITE_MAPPER RbtSphereSiteMapper
-##HETATM 2815  O   HOH   756      37.266 -20.992  -4.910  0.90 24.86      1CSE2940
-#    CENTER (7.185,8.250,22.649)
-#    RADIUS 15.0
-#    SMALL_SPHERE 1.5
-#    LARGE_SPHERE 6.0
-#    MAX_CAVITIES 1
-#END_SECTION
-
 #################################
 #CAVITY RESTRAINT PENALTY
 #################################
@@ -85,10 +72,10 @@ class WriteRDJob(luigi.Task):
         job_script = '''#!/bin/bash
 cd %s
 touch %s_rdock.running
-grep -v HOH %s_apo.pdb | grep -v ACT | grep -v DMS  > %s_apo_desolv.pdb
+grep -v HOH %s_apo.pdb | grep -v \ ACT\  | grep -v DMS  > %s_apo_desolv.pdb
 obabel -ipdb %s_apo_desolv.pdb -osy2 -O %s_apo_desolv.mol2
 rbcavity -was -d -r %s > %s_rbcavity.log
-rbdock -i %s_mol.sdf -o %s_rdock_out.pdb -r %s -p dock.prm -n 50 > %s_rbcavity.log
+rbdock -i %s_mol.sdf -o %s_rdock_out -r %s -p dock.prm -n 50 > %s_rbcavity.log
 rm %s_rdock.running
 touch %s_rdock.done
 ''' % (self.job_directory, self.job_name, self.job_name, self.job_name, self.job_name,
