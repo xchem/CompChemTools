@@ -38,18 +38,6 @@ SECTION CAVITY
     WEIGHT 1.0
 END_SECTION
 
-#################################
-## PHARMACOPHORIC RESTRAINTS
-#################################
-#SECTION PHARMA
-#    SCORING_FUNCTION RbtPharmaSF
-#    WEIGHT 1.0
-#    CONSTRAINTS_FILE pharma_cdk2.const
-#   OPTIONAL_FILE optional.const
-#   NOPT 3
-#   WRITE_ERRORS TRUE
-#END_SECTION
-
 ''' %(self.job_name, self.job_name, self.job_name)
 
         with self.output().open('wb') as f:
@@ -75,12 +63,15 @@ touch %s_rdock.running
 grep -v HOH %s_apo.pdb | grep -v \ ACT\  | grep -v DMS  > %s_apo_desolv.pdb
 obabel -ipdb %s_apo_desolv.pdb -osy2 -O %s_apo_desolv.mol2
 rbcavity -was -d -r %s > %s_rbcavity.log
-rbdock -i %s_mol.sdf -o %s_rdock_out -r %s -p dock.prm -n 50 > %s_rbcavity.log
+rbdock -i %s_mol.sdf -o %s_rdock_out -r %s -p dock.prm -n 100 > %s_rbdock.log
+sdsort -n -f'SCORE' %s_rdock_out.sd > %s_rdock_out_sorted.sd
+sdrmsd %s_mol.sdf %s_rdock_out_sorted.sd > %s_sdrmsd.dat
 rm %s_rdock.running
 touch %s_rdock.done
 ''' % (self.job_directory, self.job_name, self.job_name, self.job_name, self.job_name,
        self.job_name, self.input().path, self.job_name, self.job_name, self.job_name,
-       self.input().path, self.job_name, self.job_name, self.job_name) 
+       self.input().path, self.job_name, self.job_name, self.job_name, self.job_name, 
+       self.job_name, self.job_name, self.job_name, self.job_name) 
 
         with self.output().open('wb') as f:
             f.write(job_script)
